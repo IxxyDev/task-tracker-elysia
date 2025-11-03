@@ -6,6 +6,9 @@
     "dev": "bun --watch src/main.ts",
     "start": "bun src/main.ts",
     "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:domain": "bun test tests/domain",
+    "test:application": "bun test tests/application",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
