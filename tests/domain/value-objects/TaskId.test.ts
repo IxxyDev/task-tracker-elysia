@@ -2,15 +2,15 @@ import { describe, it, expect } from "bun:test";
 import { TaskId } from "@domain/value-objects/TaskId"
 
 describe("TaskId", () => {
-  const uuid = "a1b2c3d4-e5f6-4789-a012-3456789abcde";
-  const anotherUuid = "b2c3d4e5-f6a7-4890-b123-456789abcdef";
+  const uuid = "01933eb4-18a2-7123-8abc-123456789abc";
+  const anotherUuid = "01933eb4-18a2-7456-9def-987654321fed";
 
   describe("::create", () => {
     it('should generate unique id automatically', () => {
       const taskId = TaskId.create()
 
       expect(taskId.toString()).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
       );
     });
 
