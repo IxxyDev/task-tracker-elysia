@@ -3,7 +3,7 @@ export const Ok = <T>(value: T): OkResult<T> => ({
   value
 })
 
-export const Err = <T = never>(error: string): ErrResult => ({
+export const Err = (error: string): ErrResult => ({
   ok: false,
   error
 })
