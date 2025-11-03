@@ -5,7 +5,7 @@ describe("DueDate", () => {
   const _1_DAY = 24 * 60 * 60 * 1000;
   const _2_DAYS = 2 * _1_DAY;
   const _12_HOURS = 0.5 * _1_DAY;
-  const _3_MINUTES = 30 * 60 * 100;
+  const _30_MINUTES = 30 * 60 * 1000;
 
   describe("::create", () => {
     it("should create from future date", () => {
@@ -58,7 +58,7 @@ describe("DueDate", () => {
     })
 
     it('should identify immediate deadline within 1 hour', () => {
-      const immediateDate = new Date(Date.now() + _3_MINUTES);
+      const immediateDate = new Date(Date.now() + _30_MINUTES);
 
       const result = DueDate.create(immediateDate);
 
