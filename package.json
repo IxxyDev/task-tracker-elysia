@@ -9,6 +9,8 @@
     "test:watch": "bun test --watch",
     "test:domain": "bun test tests/domain",
     "test:application": "bun test tests/application",
+    "test:infrastructure": "bun test tests/infrastructure",
+    "test:integration": "bun test tests/infrastructure",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
