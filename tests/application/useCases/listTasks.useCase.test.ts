@@ -6,10 +6,11 @@ import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
 import { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { Ok, Err } from '@shared/result.types';
+import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
+import { createTestTask } from '@tests/helpers/task.fixtures';
+import { _1_DAY, _12_HOURS, VALID_TASK_ID } from '@tests/helpers/constants';
 
 describe("ListTasksUseCase", () => {
-  const _1_DAY = 24 * 60 * 60 * 1000;
-  const _12_HOURS = 0.5 * _1_DAY;
 
   describe("::execute", () => {
     it('should list all tasks', async () => {

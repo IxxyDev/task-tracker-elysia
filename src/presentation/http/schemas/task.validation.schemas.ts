@@ -1,17 +1,20 @@
 import * as v from 'valibot';
+import { Title } from '@domain/valueObjects/title.valueObject';
+import { Description } from '@domain/valueObjects/description.valueObject';
+import { TaskId } from '@domain/valueObjects/taskId.valueObject';
 
 export const CreateTaskSchema = v.object({
   title: v.pipe(
     v.string('Title must be a string'),
     v.trim(),
     v.minLength(1, 'Title cannot be empty'),
-    v.maxLength(200, 'Title cannot exceed 200 characters')
+    v.maxLength(Title.MAX_LENGTH, `Title cannot exceed ${Title.MAX_LENGTH} characters`)
   ),
   description: v.optional(
     v.pipe(
       v.string('Description must be a string'),
       v.trim(),
-      v.maxLength(1000, 'Description cannot exceed 1000 characters')
+      v.maxLength(Description.MAX_LENGTH, `Description cannot exceed ${Description.MAX_LENGTH} characters`)
     )
   ),
   dueDate: v.pipe(
@@ -26,14 +29,14 @@ export const UpdateTaskSchema = v.object({
       v.string('Title must be a string'),
       v.trim(),
       v.minLength(1, 'Title cannot be empty'),
-      v.maxLength(200, 'Title cannot exceed 200 characters')
+      v.maxLength(Title.MAX_LENGTH, `Title cannot exceed ${Title.MAX_LENGTH} characters`)
     )
   ),
   description: v.optional(
     v.pipe(
       v.string('Description must be a string'),
       v.trim(),
-      v.maxLength(1000, 'Description cannot exceed 1000 characters')
+      v.maxLength(Description.MAX_LENGTH, `Description cannot exceed ${Description.MAX_LENGTH} characters`)
     )
   ),
   dueDate: v.optional(
@@ -51,10 +54,7 @@ export const ChangeStatusSchema = v.object({
 export const TaskIdParamSchema = v.object({
   id: v.pipe(
     v.string('Task ID must be a string'),
-    v.regex(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      'Invalid UUID v7 format'
-    )
+    v.regex(TaskId.UUID_V7_REGEX, 'Invalid UUID v7 format')
   ),
 });
 

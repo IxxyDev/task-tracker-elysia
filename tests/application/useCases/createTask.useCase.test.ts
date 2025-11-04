@@ -1,21 +1,15 @@
 import { describe, it, expect } from 'bun:test';
 import { CreateTaskUseCase } from '@application/useCases/createTask.useCase';
-import type { TaskRepository } from '@domain/repositories/task.repository';
 import { Ok, Err } from '@shared/result.types';
+import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
+import { _1_DAY } from '@tests/helpers/constants';
 
 describe("CreateTaskUseCase", () => {
-  const _1_DAY = 24 * 60 * 60 * 1000;
-
   describe("::execute", () => {
     it('should create task successfully', async () => {
-      const mockRepository: TaskRepository = {
+      const mockRepository = createMockTaskRepository({
         save: async () => Ok(undefined),
-        findById: async () => Err('Not implemented'),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
+      });
 
       const useCase = new CreateTaskUseCase(mockRepository);
       const futureDate = new Date(Date.now() + _1_DAY);
@@ -30,14 +24,9 @@ describe("CreateTaskUseCase", () => {
     });
 
     it('should create task without description', async () => {
-      const mockRepository: TaskRepository = {
+      const mockRepository = createMockTaskRepository({
         save: async () => Ok(undefined),
-        findById: async () => Err('Not implemented'),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
+      });
 
       const useCase = new CreateTaskUseCase(mockRepository);
       const futureDate = new Date(Date.now() + _1_DAY);
@@ -51,14 +40,9 @@ describe("CreateTaskUseCase", () => {
     });
 
     it('should reject empty title', async () => {
-      const mockRepository: TaskRepository = {
+      const mockRepository = createMockTaskRepository({
         save: async () => Ok(undefined),
-        findById: async () => Err('Not implemented'),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
+      });
 
       const useCase = new CreateTaskUseCase(mockRepository);
       const futureDate = new Date(Date.now() + _1_DAY);
@@ -72,14 +56,9 @@ describe("CreateTaskUseCase", () => {
     });
 
     it('should reject past due date', async () => {
-      const mockRepository: TaskRepository = {
+      const mockRepository = createMockTaskRepository({
         save: async () => Ok(undefined),
-        findById: async () => Err('Not implemented'),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
+      });
 
       const useCase = new CreateTaskUseCase(mockRepository);
       const pastDate = new Date(Date.now() - _1_DAY);
@@ -93,14 +72,9 @@ describe("CreateTaskUseCase", () => {
     });
 
     it('should handle repository save error', async () => {
-      const mockRepository: TaskRepository = {
+      const mockRepository = createMockTaskRepository({
         save: async () => Err('Database connection failed'),
-        findById: async () => Err('Not implemented'),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
+      });
 
       const useCase = new CreateTaskUseCase(mockRepository);
       const futureDate = new Date(Date.now() + _1_DAY);

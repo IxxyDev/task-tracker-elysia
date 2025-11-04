@@ -12,7 +12,9 @@ export class Task {
     private title: Title,
     private description: Description,
     private dueDate: DueDate,
-    private status: TaskStatus
+    private status: TaskStatus,
+    private readonly createdAt: Date,
+    private updatedAt: Date
   ) {}
 
   static create(
@@ -20,12 +22,15 @@ export class Task {
     dueDate: DueDate,
     description?: Description
   ): Task {
+    const now = new Date();
     return new Task(
       TaskId.create(),
       title,
       description ?? Description.create('').value!,
       dueDate,
-      TaskStatus.PENDING
+      TaskStatus.PENDING,
+      now,
+      now
     )
   }
 
@@ -34,13 +39,31 @@ export class Task {
     title: Title,
     description: Description,
     dueDate: DueDate,
-    status: TaskStatus
+    status: TaskStatus,
+    createdAt: Date,
+    updatedAt: Date
   ): Task {
-    return new Task(id, title, description, dueDate, status);
+    return new Task(id, title, description, dueDate, status, createdAt, updatedAt);
+  }
+
+  executeAction(action: string): Result<void> {
+    const actions: Record<string, () => Result<void>> = {
+      start: () => this.start(),
+      complete: () => this.complete(),
+      cancel: () => this.cancel(),
+    };
+
+    const actionFn = actions[action];
+    if (!actionFn) {
+      return Err('Invalid action');
+    }
+
+    return actionFn();
   }
 
   start(): Result<void> {
     this.status = TaskStatus.IN_PROGRESS;
+    this.updatedAt = new Date();
     return Ok(undefined);
   }
 
@@ -50,6 +73,7 @@ export class Task {
     }
 
     this.status = TaskStatus.COMPLETED;
+    this.updatedAt = new Date();
     return Ok(undefined);
   }
 
@@ -59,19 +83,23 @@ export class Task {
     }
 
     this.status = TaskStatus.CANCELLED;
+    this.updatedAt = new Date();
     return Ok(undefined);
   }
 
   updateTitle(title: Title): void {
     this.title = title;
+    this.updatedAt = new Date();
   }
 
   updateDescription(description: Description): void {
     this.description = description;
+    this.updatedAt = new Date();
   }
 
   updateDueDate(dueDate: DueDate): void {
     this.dueDate = dueDate;
+    this.updatedAt = new Date();
   }
 
   getId(): TaskId {
@@ -92,6 +120,14 @@ export class Task {
 
   getStatus(): TaskStatus {
     return this.status;
+  }
+
+  getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  getUpdatedAt(): Date {
+    return this.updatedAt;
   }
 
   isActive(): boolean {

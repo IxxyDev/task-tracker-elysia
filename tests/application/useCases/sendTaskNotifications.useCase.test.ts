@@ -5,16 +5,15 @@ import type { NotificationService } from '@application/ports/notification.servic
 import { Task } from '@domain/entities/task.entity';
 import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
-import { Ok, Err } from '@shared/result.types';
-
-const _2_HOURS = 2 * 60 * 60 * 1000;
-const _5_HOURS = 5 * 60 * 60 * 1000;
-const _12_HOURS = 12;
+import { Ok, Err, type Result } from '@shared/result.types';
+import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
+import { createTestTask } from '@tests/helpers/task.fixtures';
+import { _1_DAY, _12_HOURS, VALID_TASK_ID, _2_HOURS, _5_HOURS } from '@tests/helpers/constants';
 
 class MockTaskRepository implements TaskRepository {
-  private mockFindDueSoon: any;
+  private mockFindDueSoon: (hoursThreshold?: number) => Promise<Result<Task[]>>;
 
-  setFindDueSoon(fn: any) {
+  setFindDueSoon(fn: (hoursThreshold?: number) => Promise<Result<Task[]>>) {
     this.mockFindDueSoon = fn;
   }
 
@@ -44,10 +43,10 @@ class MockTaskRepository implements TaskRepository {
 }
 
 class MockNotificationService implements NotificationService {
-  private mockSend: any;
+  private mockSend: (task: Task) => Promise<Result<void>>;
   public sentTasks: Task[] = [];
 
-  setMockSend(fn: any) {
+  setMockSend(fn: (task: Task) => Promise<Result<void>>) {
     this.mockSend = fn;
   }
 

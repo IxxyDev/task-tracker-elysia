@@ -18,22 +18,7 @@ export class ChangeTaskStatusUseCase {
 
     const task = taskResult.value;
 
-    let actionResult: Result<void>;
-
-    switch (dto.action) {
-      case 'start':
-        actionResult = task.start();
-        break;
-      case 'complete':
-        actionResult = task.complete();
-        break;
-      case 'cancel':
-        actionResult = task.cancel();
-        break;
-      default:
-        return Err('Invalid action');
-    }
-
+    const actionResult = task.executeAction(dto.action);
     if (!actionResult.ok) {
       return Err(actionResult.error);
     }

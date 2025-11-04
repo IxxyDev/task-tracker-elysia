@@ -2,7 +2,7 @@ import { Ok, Err } from '@shared/result.types';
 import type { Result } from '@shared/result.types';
 
 export class Title {
-  private static readonly MAX_LENGTH = 200;
+  static readonly MAX_LENGTH = 200;
 
   private constructor(private readonly value: string) {}
 

@@ -1,21 +1,17 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { NotificationWorker } from '@infrastructure/worker/notification.worker.service';
 import type { SendTaskNotificationsUseCase } from '@application/useCases/sendTaskNotifications.useCase';
-import { Ok, Err } from '@shared/result.types';
+import { Ok, Err, type Result } from '@shared/result.types';
+import { _1_MINUTE_MS, _50_MS, _100_MS, _120_MS, _200_MS } from '@tests/helpers/constants';
 
-const _1_MINUTE_MS = 60000;
 const _24_HOURS = 24;
 const _12_HOURS = 12;
-const _50_MS = 50;
-const _100_MS = 100;
-const _120_MS = 120;
-const _200_MS = 200;
 
 class MockSendTaskNotificationsUseCase {
   public executeCalls: Array<{ threshold?: number }> = [];
-  private mockExecute: any;
+  private mockExecute?: (hoursThreshold?: number) => Promise<Result<void>>;
 
-  setMockExecute(fn: any) {
+  setMockExecute(fn: (hoursThreshold?: number) => Promise<Result<void>>) {
     this.mockExecute = fn;
   }
 
@@ -109,9 +105,9 @@ describe("NotificationWorker", () => {
     });
 
     it('should log error when use case fails', async () => {
-      const consoleErrorSpy = { calls: [] as any[] };
+      const consoleErrorSpy = { calls: [] as unknown[][] };
       const originalError = console.error;
-      console.error = (...args: any[]) => {
+      console.error = (...args: unknown[]) => {
         consoleErrorSpy.calls.push(args);
         originalError.apply(console, args);
       };

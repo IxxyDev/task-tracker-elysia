@@ -1,5 +1,5 @@
 import { Err, Ok, type Result } from '@shared/result.types';
-import type { TaskInsert, TaskRow } from './schema';
+import type { TaskInsert, TaskRow } from './task.db.schema';
 import { Task } from '@domain/entities/task.entity';
 import { TaskId } from '@domain/valueObjects/taskId.valueObject';
 import { Title } from '@domain/valueObjects/title.valueObject';
@@ -40,7 +40,9 @@ export class TaskMapper {
         title.value,
         description.value,
         dueDate.value,
-        status.value
+        status.value,
+        row.createdAt,
+        row.updatedAt
       )
     );
   }
@@ -52,7 +54,8 @@ export class TaskMapper {
       description: task.getDescription().toString(),
       dueDate: task.getDueDate().toDate(),
       status: task.getStatus(),
-      updatedAt: new Date(),
+      createdAt: task.getCreatedAt(),
+      updatedAt: task.getUpdatedAt(),
     };
   }
 }

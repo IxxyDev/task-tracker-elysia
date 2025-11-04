@@ -1,15 +1,29 @@
 import type { Task } from '@domain/entities/task.entity';
 import type { TaskRepository } from '@domain/repositories/task.repository';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { TaskMapper } from './TaskMapper';
+import { TaskMapper } from './task.db.mapper';
 import { Err, Ok, type Result } from '@shared/result.types';
-import { tasks } from './schema';
+import { tasks, type TaskRow } from './task.db.schema';
 import type { TaskId } from '@domain/valueObjects/taskId.valueObject';
 import type { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { eq, lte } from 'drizzle-orm';
 
 export class DrizzleTaskRepository implements TaskRepository {
   constructor(private readonly db: PostgresJsDatabase) {}
+
+  private mapRowsToTasks(rows: TaskRow[]): Result<Task[]> {
+    const taskResults = rows.map((row) => TaskMapper.toDomain(row));
+
+    const taskList: Task[] = [];
+    for (const result of taskResults) {
+      if (!result.ok) {
+        return Err(result.error);
+      }
+      taskList.push(result.value);
+    }
+
+    return Ok(taskList);
+  }
 
   async save(task: Task): Promise<Result<void>> {
     try {
@@ -56,18 +70,7 @@ export class DrizzleTaskRepository implements TaskRepository {
   async findAll(): Promise<Result<Task[]>> {
     try {
       const rows = await this.db.select().from(tasks);
-
-      const taskResults = rows.map((row) => TaskMapper.toDomain(row));
-
-      const taskList: Task[] = [];
-      for (const result of taskResults) {
-        if (!result.ok) {
-          return Err(result.error);
-        }
-        taskList.push(result.value);
-      }
-
-      return Ok(taskList);
+      return this.mapRowsToTasks(rows);
     } catch (error) {
       return Err(`Failed to find all tasks: ${error}`);
     }
@@ -90,17 +93,7 @@ export class DrizzleTaskRepository implements TaskRepository {
         .from(tasks)
         .where(eq(tasks.status, status));
 
-      const taskResults = rows.map((row) => TaskMapper.toDomain(row));
-
-      const taskList: Task[] = [];
-      for (const result of taskResults) {
-        if (!result.ok) {
-          return Err(result.error);
-        }
-        taskList.push(result.value);
-      }
-
-      return Ok(taskList);
+      return this.mapRowsToTasks(rows);
     } catch (error) {
       return Err(`Failed to find tasks by status: ${error}`);
     }
@@ -108,26 +101,15 @@ export class DrizzleTaskRepository implements TaskRepository {
 
   async findDueSoon(hoursThreshold: number = 24): Promise<Result<Task[]>> {
     try {
-      const thresholdDate = new Date(
-        Date.now() + hoursThreshold * 60 * 60 * 1000
-      );
+      const MS_PER_HOUR = 60 * 60 * 1000;
+      const thresholdDate = new Date(Date.now() + hoursThreshold * MS_PER_HOUR);
 
       const rows = await this.db
         .select()
         .from(tasks)
         .where(lte(tasks.dueDate, thresholdDate));
 
-      const taskResults = rows.map((row) => TaskMapper.toDomain(row));
-
-      const taskList: Task[] = [];
-      for (const result of taskResults) {
-        if (!result.ok) {
-          return Err(result.error);
-        }
-        taskList.push(result.value);
-      }
-
-      return Ok(taskList);
+      return this.mapRowsToTasks(rows);
     } catch (error) {
       return Err(`Failed to find due soon tasks: ${error}`);
     }

@@ -1,4 +1,4 @@
-import type { SendTaskNotificationsUseCase } from '@application/use-cases/SendTaskNotificationsUseCase';
+import type { SendTaskNotificationsUseCase } from '@application/useCases/sendTaskNotifications.useCase';
 
 export class NotificationWorker {
   private intervalId: Timer | null = null;

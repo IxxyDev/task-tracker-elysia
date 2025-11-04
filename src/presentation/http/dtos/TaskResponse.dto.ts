@@ -16,8 +16,8 @@ export class TaskResponseDTO {
       description: task.getDescription().toString(),
       dueDate: task.getDueDate().toDate().toISOString(),
       status: task.getStatus(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: task.getCreatedAt().toISOString(),
+      updatedAt: task.getUpdatedAt().toISOString(),
     };
   }
 

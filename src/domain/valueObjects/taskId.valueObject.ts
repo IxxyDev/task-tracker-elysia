@@ -3,6 +3,8 @@ import type { Result } from '@shared/result.types';
 import { Ok, Err } from '@shared/result.types';
 
 export class TaskId {
+  static readonly UUID_V7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
   private constructor(private readonly value: string) {}
 
   toString(): string {
@@ -18,10 +20,7 @@ export class TaskId {
   }
 
   static fromString(value: string): Result<TaskId> {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-    if (!uuidRegex.test(value)) {
+    if (!TaskId.UUID_V7_REGEX.test(value)) {
       return Err('Invalid TaskId format')
     }
 

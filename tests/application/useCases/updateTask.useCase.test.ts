@@ -1,18 +1,19 @@
 import { describe, it, expect } from 'bun:test';
-import { ChangeTaskStatusUseCase } from '@application/useCases/changeTaskStatus.useCase';
+import { UpdateTaskUseCase } from '@application/useCases/updateTask.useCase';
 import type { TaskRepository } from '@domain/repositories/task.repository';
 import { Task } from '@domain/entities/task.entity';
 import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
-import { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { Ok, Err } from '@shared/result.types';
+import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
+import { createTestTask } from '@tests/helpers/task.fixtures';
+import { _1_DAY, _12_HOURS, VALID_TASK_ID } from '@tests/helpers/constants';
 
-describe("ChangeTaskStatusUseCase", () => {
-  const _1_DAY = 24 * 60 * 60 * 1000;
-  const validTaskId = '01933eb4-18a2-7123-8abc-123456789abc';
+describe("UpdateTaskUseCase", () => {
+  const _2_DAYS = 2 * _1_DAY;
 
   describe("::execute", () => {
-    it('should start pending task', async () => {
+    it('should update task title', async () => {
       const title = Title.create('Buy groceries').value!;
       const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
       const task = Task.create(title, dueDate);
@@ -26,22 +27,21 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'start',
+        taskId: VALID_TASK_ID,
+        title: 'Buy vegetables',
       });
 
       expect(result.value).toEqual(undefined);
-      expect(task.getStatus()).toEqual(TaskStatus.IN_PROGRESS);
+      expect(task.getTitle().toString()).toEqual('Buy vegetables');
     });
 
-    it('should complete in-progress task', async () => {
+    it('should update task description', async () => {
       const title = Title.create('Buy groceries').value!;
       const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
       const task = Task.create(title, dueDate);
-      task.start();
 
       const mockRepository: TaskRepository = {
         save: async () => Ok(undefined),
@@ -52,18 +52,18 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'complete',
+        taskId: VALID_TASK_ID,
+        description: 'Organic products only',
       });
 
       expect(result.value).toEqual(undefined);
-      expect(task.getStatus()).toEqual(TaskStatus.COMPLETED);
+      expect(task.getDescription().toString()).toEqual('Organic products only');
     });
 
-    it('should cancel pending task', async () => {
+    it('should update task due date', async () => {
       const title = Title.create('Buy groceries').value!;
       const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
       const task = Task.create(title, dueDate);
@@ -77,15 +77,44 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
+      const newDueDate = new Date(Date.now() + _2_DAYS);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'cancel',
+        taskId: VALID_TASK_ID,
+        dueDate: newDueDate,
       });
 
       expect(result.value).toEqual(undefined);
-      expect(task.getStatus()).toEqual(TaskStatus.CANCELLED);
+    });
+
+    it('should update multiple fields', async () => {
+      const title = Title.create('Buy groceries').value!;
+      const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
+      const task = Task.create(title, dueDate);
+
+      const mockRepository: TaskRepository = {
+        save: async () => Ok(undefined),
+        findById: async () => Ok(task),
+        findAll: async () => Err('Not implemented'),
+        delete: async () => Err('Not implemented'),
+        findByStatus: async () => Err('Not implemented'),
+        findDueSoon: async () => Err('Not implemented'),
+      };
+
+      const useCase = new UpdateTaskUseCase(mockRepository);
+      const newDueDate = new Date(Date.now() + _2_DAYS);
+
+      const result = await useCase.execute({
+        taskId: VALID_TASK_ID,
+        title: 'Buy vegetables',
+        description: 'Organic only',
+        dueDate: newDueDate,
+      });
+
+      expect(result.value).toEqual(undefined);
+      expect(task.getTitle().toString()).toEqual('Buy vegetables');
+      expect(task.getDescription().toString()).toEqual('Organic only');
     });
 
     it('should reject invalid task id', async () => {
@@ -98,21 +127,20 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
         taskId: 'invalid-id',
-        action: 'start',
+        title: 'Buy vegetables',
       });
 
       expect(result.error).toEqual('Invalid TaskId format');
     });
 
-    it('should reject completing cancelled task', async () => {
+    it('should reject invalid title', async () => {
       const title = Title.create('Buy groceries').value!;
       const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
       const task = Task.create(title, dueDate);
-      task.cancel();
 
       const mockRepository: TaskRepository = {
         save: async () => Ok(undefined),
@@ -123,40 +151,14 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'complete',
+        taskId: VALID_TASK_ID,
+        title: '',
       });
 
-      expect(result.error).toEqual('Cannot complete a cancelled task');
-    });
-
-    it('should reject cancelling completed task', async () => {
-      const title = Title.create('Buy groceries').value!;
-      const dueDate = DueDate.create(new Date(Date.now() + _1_DAY)).value!;
-      const task = Task.create(title, dueDate);
-      task.start();
-      task.complete();
-
-      const mockRepository: TaskRepository = {
-        save: async () => Ok(undefined),
-        findById: async () => Ok(task),
-        findAll: async () => Err('Not implemented'),
-        delete: async () => Err('Not implemented'),
-        findByStatus: async () => Err('Not implemented'),
-        findDueSoon: async () => Err('Not implemented'),
-      };
-
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
-
-      const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'cancel',
-      });
-
-      expect(result.error).toEqual('Cannot cancel a completed task');
+      expect(result.error).toEqual('Title cannot be empty');
     });
 
     it('should handle task not found', async () => {
@@ -169,11 +171,11 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'start',
+        taskId: VALID_TASK_ID,
+        title: 'Buy vegetables',
       });
 
       expect(result.error).toEqual('Task not found');
@@ -193,11 +195,11 @@ describe("ChangeTaskStatusUseCase", () => {
         findDueSoon: async () => Err('Not implemented'),
       };
 
-      const useCase = new ChangeTaskStatusUseCase(mockRepository);
+      const useCase = new UpdateTaskUseCase(mockRepository);
 
       const result = await useCase.execute({
-        taskId: validTaskId,
-        action: 'start',
+        taskId: VALID_TASK_ID,
+        title: 'Buy vegetables',
       });
 
       expect(result.error).toEqual('Database connection failed');
