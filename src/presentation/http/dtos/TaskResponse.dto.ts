@@ -1,4 +1,4 @@
-import type { Task } from '@domain/entities/Task';
+import type { Task } from '@domain/entities/task.entity';
 
 export class TaskResponseDTO {
   id: string;

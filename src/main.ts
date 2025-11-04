@@ -2,18 +2,18 @@ import { Elysia } from 'elysia';
 import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 
-import { db } from '@infrastructure/database/connection';
-import { DrizzleTaskRepository } from '@infrastructure/database/DrizzleTaskRepository';
+import { db } from '@infrastructure/database/db.connection';
+import { DrizzleTaskRepository } from '@infrastructure/database/task.db.repository';
 
-import { CreateTaskUseCase } from '@application/use-cases/CreateTaskUseCase';
-import { GetTaskUseCase } from '@application/use-cases/GetTaskUseCase';
-import { UpdateTaskUseCase } from '@application/use-cases/UpdateTaskUseCase';
-import { ChangeTaskStatusUseCase } from '@application/use-cases/ChangeTaskStatusUseCase';
-import { ListTasksUseCase } from '@application/use-cases/ListTasksUseCase';
-import { DeleteTaskUseCase } from '@application/use-cases/DeleteTaskUseCase';
+import { CreateTaskUseCase } from '@application/useCases/createTask.useCase';
+import { GetTaskUseCase } from '@application/useCases/getTask.useCase';
+import { UpdateTaskUseCase } from '@application/useCases/updateTask.useCase';
+import { ChangeTaskStatusUseCase } from '@application/useCases/changeTaskStatus.useCase';
+import { ListTasksUseCase } from '@application/useCases/listTasks.useCase';
+import { DeleteTaskUseCase } from '@application/useCases/deleteTask.useCase';
 
-import { createTaskRoutes } from '@presentation/http/routes/tasks.routes';
-import { HttpStatus } from '@presentation/http/constants/http-status';
+import { createTaskRoutes } from '@presentation/http/routes/task.router';
+import { HttpStatus } from '@presentation/http/constants/http.consts';
 
 const PORT = process.env.PORT || 3000;
 

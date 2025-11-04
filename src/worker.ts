@@ -1,9 +1,9 @@
-import { loadConfig } from '@shared/config';
-import { db } from '@infrastructure/database/connection';
-import { DrizzleTaskRepository } from '@infrastructure/database/DrizzleTaskRepository';
-import { ConsoleNotificationService } from '@infrastructure/notification/ConsoleNotificationService';
-import { SendTaskNotificationsUseCase } from '@application/use-cases/SendTaskNotificationsUseCase';
-import { NotificationWorker } from '@infrastructure/worker/NotificationWorker';
+import { loadConfig } from '@shared/app.config';
+import { db } from '@infrastructure/database/db.connection';
+import { DrizzleTaskRepository } from '@infrastructure/database/task.db.repository';
+import { ConsoleNotificationService } from '@infrastructure/notification/console.notification.service';
+import { SendTaskNotificationsUseCase } from '@application/useCases/sendTaskNotifications.useCase';
+import { NotificationWorker } from '@infrastructure/worker/notification.worker.service';
 
 const config = loadConfig();
 
