@@ -3,6 +3,7 @@ export interface AppConfig {
   redisUrl: string;
   port: number;
   notificationWindowHours: number;
+  notificationCheckIntervalMs: number;
 }
 
 const parseNumber = (value: string | undefined, fallback: number): number => {
@@ -15,7 +16,7 @@ const parseNumber = (value: string | undefined, fallback: number): number => {
 };
 
 export const loadConfig = (): AppConfig => {
-  const { DATABASE_URL, REDIS_URL, PORT, NOTIFICATION_WINDOW_HOURS } = process.env;
+  const { DATABASE_URL, REDIS_URL, PORT, NOTIFICATION_WINDOW_HOURS, NOTIFICATION_CHECK_INTERVAL_MS } = process.env;
 
   if (!DATABASE_URL) {
     throw new Error("DATABASE_URL is required");
@@ -29,6 +30,7 @@ export const loadConfig = (): AppConfig => {
     databaseUrl: DATABASE_URL,
     redisUrl: REDIS_URL,
     port: parseNumber(PORT, 3000),
-    notificationWindowHours: parseNumber(NOTIFICATION_WINDOW_HOURS, 24)
+    notificationWindowHours: parseNumber(NOTIFICATION_WINDOW_HOURS, 24),
+    notificationCheckIntervalMs: parseNumber(NOTIFICATION_CHECK_INTERVAL_MS, 300000)
   };
 };
