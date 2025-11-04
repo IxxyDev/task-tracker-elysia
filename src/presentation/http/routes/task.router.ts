@@ -1,10 +1,10 @@
 import { Elysia } from 'elysia';
-import type { CreateTaskUseCase } from '@application/use-cases/CreateTaskUseCase';
-import type { GetTaskUseCase } from '@application/use-cases/GetTaskUseCase';
-import type { UpdateTaskUseCase } from '@application/use-cases/UpdateTaskUseCase';
-import type { ChangeTaskStatusUseCase } from '@application/use-cases/ChangeTaskStatusUseCase';
-import type { ListTasksUseCase } from '@application/use-cases/ListTasksUseCase';
-import type { DeleteTaskUseCase } from '@application/use-cases/DeleteTaskUseCase';
+import type { CreateTaskUseCase } from '@application/useCases/createTask.useCase';
+import type { GetTaskUseCase } from '@application/useCases/getTask.useCase';
+import type { UpdateTaskUseCase } from '@application/useCases/updateTask.useCase';
+import type { ChangeTaskStatusUseCase } from '@application/useCases/changeTaskStatus.useCase';
+import type { ListTasksUseCase } from '@application/useCases/listTasks.useCase';
+import type { DeleteTaskUseCase } from '@application/useCases/deleteTask.useCase';
 import { TaskResponseDTO } from '../dtos/taskResponse.dto';
 import {
   CreateTaskSchema,
@@ -14,6 +14,7 @@ import {
   ListTasksQuerySchema,
 } from '../schemas/task.validation.schemas';
 import { HttpStatus } from '../constants/http.consts';
+import { mapErrorToHttpStatus } from '../errors/errorMapper';
 import * as v from 'valibot';
 
 export const createTaskRoutes = (
@@ -37,7 +38,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.BAD_REQUEST;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 
@@ -65,7 +66,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.NOT_FOUND;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 
@@ -93,7 +94,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.BAD_REQUEST;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 
@@ -117,7 +118,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.NOT_FOUND;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 
@@ -144,7 +145,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.BAD_REQUEST;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 
@@ -170,7 +171,7 @@ export const createTaskRoutes = (
         });
 
         if (!result.ok) {
-          set.status = HttpStatus.BAD_REQUEST;
+          set.status = mapErrorToHttpStatus(result.error);
           return { error: result.error };
         }
 

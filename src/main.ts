@@ -2,29 +2,13 @@ import { Elysia } from 'elysia';
 import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 
-import { db } from '@infrastructure/database/db.connection';
-import { DrizzleTaskRepository } from '@infrastructure/database/task.db.repository';
-
-import { CreateTaskUseCase } from '@application/useCases/createTask.useCase';
-import { GetTaskUseCase } from '@application/useCases/getTask.useCase';
-import { UpdateTaskUseCase } from '@application/useCases/updateTask.useCase';
-import { ChangeTaskStatusUseCase } from '@application/useCases/changeTaskStatus.useCase';
-import { ListTasksUseCase } from '@application/useCases/listTasks.useCase';
-import { DeleteTaskUseCase } from '@application/useCases/deleteTask.useCase';
-
+import { createUseCases } from '@infrastructure/composition/dependencies';
 import { createTaskRoutes } from '@presentation/http/routes/task.router';
 import { HttpStatus } from '@presentation/http/constants/http.consts';
 
 const PORT = process.env.PORT || 3000;
 
-const taskRepository = new DrizzleTaskRepository(db);
-
-const createTaskUseCase = new CreateTaskUseCase(taskRepository);
-const getTaskUseCase = new GetTaskUseCase(taskRepository);
-const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
-const changeTaskStatusUseCase = new ChangeTaskStatusUseCase(taskRepository);
-const listTasksUseCase = new ListTasksUseCase(taskRepository);
-const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
+const useCases = createUseCases();
 
 const app = new Elysia()
   .use(cors())
@@ -67,12 +51,12 @@ const app = new Elysia()
   })
   .use(
     createTaskRoutes(
-      createTaskUseCase,
-      getTaskUseCase,
-      updateTaskUseCase,
-      changeTaskStatusUseCase,
-      listTasksUseCase,
-      deleteTaskUseCase
+      useCases.createTask,
+      useCases.getTask,
+      useCases.updateTask,
+      useCases.changeTaskStatus,
+      useCases.listTasks,
+      useCases.deleteTask
     )
   )
   .get('/', () => ({

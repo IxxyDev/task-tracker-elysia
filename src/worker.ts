@@ -1,21 +1,13 @@
 import { loadConfig } from '@shared/app.config';
-import { db } from '@infrastructure/database/db.connection';
-import { DrizzleTaskRepository } from '@infrastructure/database/task.db.repository';
-import { ConsoleNotificationService } from '@infrastructure/notification/console.notification.service';
-import { SendTaskNotificationsUseCase } from '@application/useCases/sendTaskNotifications.useCase';
+import { createUseCases } from '@infrastructure/composition/dependencies';
 import { NotificationWorker } from '@infrastructure/worker/notification.worker.service';
 
 const config = loadConfig();
 
-const taskRepository = new DrizzleTaskRepository(db);
-const notificationService = new ConsoleNotificationService();
-const sendNotificationsUseCase = new SendTaskNotificationsUseCase(
-  taskRepository,
-  notificationService
-);
+const useCases = createUseCases();
 
 const worker = new NotificationWorker(
-  sendNotificationsUseCase,
+  useCases.sendNotifications,
   config.notificationCheckIntervalMs,
   config.notificationWindowHours
 );
