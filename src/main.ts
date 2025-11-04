@@ -10,6 +10,7 @@ import { GetTaskUseCase } from '@application/use-cases/GetTaskUseCase';
 import { UpdateTaskUseCase } from '@application/use-cases/UpdateTaskUseCase';
 import { ChangeTaskStatusUseCase } from '@application/use-cases/ChangeTaskStatusUseCase';
 import { ListTasksUseCase } from '@application/use-cases/ListTasksUseCase';
+import { DeleteTaskUseCase } from '@application/use-cases/DeleteTaskUseCase';
 
 import { createTaskRoutes } from '@presentation/http/routes/tasks.routes';
 import { HttpStatus } from '@presentation/http/constants/http-status';
@@ -23,6 +24,7 @@ const getTaskUseCase = new GetTaskUseCase(taskRepository);
 const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
 const changeTaskStatusUseCase = new ChangeTaskStatusUseCase(taskRepository);
 const listTasksUseCase = new ListTasksUseCase(taskRepository);
+const deleteTaskUseCase = new DeleteTaskUseCase(taskRepository);
 
 const app = new Elysia()
   .use(cors())
@@ -69,7 +71,8 @@ const app = new Elysia()
       getTaskUseCase,
       updateTaskUseCase,
       changeTaskStatusUseCase,
-      listTasksUseCase
+      listTasksUseCase,
+      deleteTaskUseCase
     )
   )
   .get('/', () => ({

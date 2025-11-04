@@ -4,6 +4,7 @@ import type { GetTaskUseCase } from '@application/use-cases/GetTaskUseCase';
 import type { UpdateTaskUseCase } from '@application/use-cases/UpdateTaskUseCase';
 import type { ChangeTaskStatusUseCase } from '@application/use-cases/ChangeTaskStatusUseCase';
 import type { ListTasksUseCase } from '@application/use-cases/ListTasksUseCase';
+import type { DeleteTaskUseCase } from '@application/use-cases/DeleteTaskUseCase';
 import { TaskResponseDTO } from '../dtos/TaskResponse.dto';
 import {
   CreateTaskSchema,
@@ -20,7 +21,8 @@ export const createTaskRoutes = (
   getTaskUseCase: GetTaskUseCase,
   updateTaskUseCase: UpdateTaskUseCase,
   changeTaskStatusUseCase: ChangeTaskStatusUseCase,
-  listTasksUseCase: ListTasksUseCase
+  listTasksUseCase: ListTasksUseCase,
+  deleteTaskUseCase: DeleteTaskUseCase
 ) => {
   return new Elysia({ prefix: '/tasks' })
     .post(
@@ -100,6 +102,31 @@ export const createTaskRoutes = (
       {
         detail: {
           summary: 'Update task',
+          tags: ['Tasks'],
+        },
+      }
+    )
+
+    .delete(
+      '/:id',
+      async ({ params, set }) => {
+        const validated = v.parse(TaskIdParamSchema, params);
+
+        const result = await deleteTaskUseCase.execute({
+          taskId: validated.id,
+        });
+
+        if (!result.ok) {
+          set.status = HttpStatus.NOT_FOUND;
+          return { error: result.error };
+        }
+
+        set.status = HttpStatus.OK;
+        return { message: 'Task deleted successfully' };
+      },
+      {
+        detail: {
+          summary: 'Delete task',
           tags: ['Tasks'],
         },
       }
