@@ -6,9 +6,7 @@ import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
 import { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { Ok, Err } from '@shared/result.types';
-import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
-import { createTestTask } from '@tests/helpers/task.fixtures';
-import { _1_DAY, _12_HOURS, VALID_TASK_ID } from '@tests/helpers/constants';
+import { _1_DAY, _12_HOURS } from '@tests/helpers/constants';
 
 describe("ListTasksUseCase", () => {
 
@@ -34,8 +32,8 @@ describe("ListTasksUseCase", () => {
       const result = await useCase.execute({});
 
       expect(result.value!.length).toEqual(2);
-      expect(result.value![0].getTitle().toString()).toEqual('Buy groceries');
-      expect(result.value![1].getTitle().toString()).toEqual('Clean house');
+      expect(result.value![0]!.getTitle().toString()).toEqual('Buy groceries');
+      expect(result.value![1]!.getTitle().toString()).toEqual('Clean house');
     });
 
     it('should filter by status', async () => {
@@ -58,7 +56,7 @@ describe("ListTasksUseCase", () => {
       const result = await useCase.execute({ status: 'in_progress' });
 
       expect(result.value!.length).toEqual(1);
-      expect(result.value![0].getStatus()).toEqual(TaskStatus.IN_PROGRESS);
+      expect(result.value![0]!.getStatus()).toEqual(TaskStatus.IN_PROGRESS);
     });
 
     it('should filter by due soon', async () => {
@@ -80,7 +78,7 @@ describe("ListTasksUseCase", () => {
       const result = await useCase.execute({ dueSoon: true });
 
       expect(result.value!.length).toEqual(1);
-      expect(result.value![0].isDueSoon()).toEqual(true);
+      expect(result.value![0]!.isDueSoon()).toEqual(true);
     });
 
     it('should return empty array when no tasks', async () => {

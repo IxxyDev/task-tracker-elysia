@@ -150,7 +150,7 @@ describe("DrizzleTaskRepository", () => {
       const result = await repository.findByStatus(TaskStatus.PENDING);
 
       expect(result.value!.length).toEqual(1);
-      expect(result.value![0].getTitle().toString()).toEqual('Buy groceries');
+      expect(result.value![0]!.getTitle().toString()).toEqual('Buy groceries');
     });
 
     it('should filter tasks by in_progress status', async () => {
@@ -167,7 +167,7 @@ describe("DrizzleTaskRepository", () => {
       const result = await repository.findByStatus(TaskStatus.IN_PROGRESS);
 
       expect(result.value!.length).toEqual(1);
-      expect(result.value![0].getTitle().toString()).toEqual('Clean house');
+      expect(result.value![0]!.getTitle().toString()).toEqual('Clean house');
     });
 
     it('should return empty array when no tasks with status', async () => {
@@ -198,7 +198,7 @@ describe("DrizzleTaskRepository", () => {
       const result = await repository.findDueSoon();
 
       expect(result.value!.length).toEqual(1);
-      expect(result.value![0].getTitle().toString()).toEqual('Urgent task');
+      expect(result.value![0]!.getTitle().toString()).toEqual('Urgent task');
     });
 
     it('should find tasks due within custom threshold', async () => {

@@ -4,9 +4,7 @@ import type { TaskRepository } from '@domain/repositories/task.repository';
 import type { Task } from '@domain/entities/task.entity';
 import { TaskId } from '@domain/valueObjects/taskId.valueObject';
 import { Ok, Err, type Result } from '@shared/result.types';
-import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
-import { createTestTask } from '@tests/helpers/task.fixtures';
-import { _1_DAY, _12_HOURS, VALID_TASK_ID } from '@tests/helpers/constants';
+import { VALID_TASK_ID } from '@tests/helpers/constants';
 
 class MockTaskRepository implements TaskRepository {
   private mockDelete?: (id: TaskId) => Promise<Result<void>>;
@@ -51,7 +49,7 @@ describe("DeleteTaskUseCase", () => {
       const mockRepo = new MockTaskRepository();
       const useCase = new DeleteTaskUseCase(mockRepo);
 
-      mockRepo.setMockDelete(() => Ok(undefined));
+      mockRepo.setMockDelete(async () => Ok(undefined));
 
       const result = await useCase.execute({ taskId: VALID_TASK_ID });
 
@@ -78,7 +76,7 @@ describe("DeleteTaskUseCase", () => {
       const mockRepo = new MockTaskRepository();
       const useCase = new DeleteTaskUseCase(mockRepo);
 
-      mockRepo.setMockDelete(() => Err('Database error'));
+      mockRepo.setMockDelete(async () => Err('Database error'));
 
       const result = await useCase.execute({ taskId: VALID_TASK_ID });
 

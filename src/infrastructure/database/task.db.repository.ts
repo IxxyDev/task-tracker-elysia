@@ -4,12 +4,15 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { TaskMapper } from './task.db.mapper';
 import { Err, Ok, type Result } from '@shared/result.types';
 import { tasks, type TaskRow } from './task.db.schema';
+import type * as schema from './task.db.schema';
 import type { TaskId } from '@domain/valueObjects/taskId.valueObject';
 import type { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { eq, lte } from 'drizzle-orm';
 
+export type TaskDatabase = PostgresJsDatabase<typeof schema>;
+
 export class DrizzleTaskRepository implements TaskRepository {
-  constructor(private readonly db: PostgresJsDatabase) {}
+  constructor(private readonly db: TaskDatabase) {}
 
   private mapRowsToTasks(rows: TaskRow[]): Result<Task[]> {
     const taskResults = rows.map((row) => TaskMapper.toDomain(row));

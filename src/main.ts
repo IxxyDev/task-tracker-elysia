@@ -27,27 +27,20 @@ const app = new Elysia()
     })
   )
   .onError(({ code, error, set }) => {
+    const message = error instanceof Error ? error.message : String(error);
+
     if (code === 'VALIDATION') {
       set.status = HttpStatus.BAD_REQUEST;
-      return {
-        error: 'Validation failed',
-        message: error.message,
-      };
+      return { error: 'Validation failed', message };
     }
 
     if (code === 'NOT_FOUND') {
       set.status = HttpStatus.NOT_FOUND;
-      return {
-        error: 'Not found',
-        message: error.message,
-      };
+      return { error: 'Not found', message };
     }
 
     set.status = HttpStatus.INTERNAL_SERVER_ERROR;
-    return {
-      error: 'Internal server error',
-      message: error.message,
-    };
+    return { error: 'Internal server error', message };
   })
   .use(
     createTaskRoutes(

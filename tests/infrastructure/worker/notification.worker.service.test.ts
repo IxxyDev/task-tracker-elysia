@@ -81,7 +81,7 @@ describe("NotificationWorker", () => {
   describe("::error handling", () => {
     it('should handle errors gracefully and continue', async () => {
       let callCount = 0;
-      mockUseCase.setMockExecute(() => {
+      mockUseCase.setMockExecute(async () => {
         callCount++;
         if (callCount === 1) {
           return Err('First call failed');
@@ -112,7 +112,7 @@ describe("NotificationWorker", () => {
         originalError.apply(console, args);
       };
 
-      mockUseCase.setMockExecute(() => Err('Use case failed'));
+      mockUseCase.setMockExecute(async () => Err('Use case failed'));
 
       const worker = new NotificationWorker(
         mockUseCase as unknown as SendTaskNotificationsUseCase,

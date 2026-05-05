@@ -6,12 +6,10 @@ import { Task } from '@domain/entities/task.entity';
 import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
 import { Ok, Err, type Result } from '@shared/result.types';
-import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
-import { createTestTask } from '@tests/helpers/task.fixtures';
-import { _1_DAY, _12_HOURS, VALID_TASK_ID, _2_HOURS, _5_HOURS } from '@tests/helpers/constants';
+import { _12_HOURS, _2_HOURS, _5_HOURS } from '@tests/helpers/constants';
 
 class MockTaskRepository implements TaskRepository {
-  private mockFindDueSoon: (hoursThreshold?: number) => Promise<Result<Task[]>>;
+  private mockFindDueSoon!: (hoursThreshold?: number) => Promise<Result<Task[]>>;
 
   setFindDueSoon(fn: (hoursThreshold?: number) => Promise<Result<Task[]>>) {
     this.mockFindDueSoon = fn;
@@ -43,7 +41,7 @@ class MockTaskRepository implements TaskRepository {
 }
 
 class MockNotificationService implements NotificationService {
-  private mockSend: (task: Task) => Promise<Result<void>>;
+  private mockSend!: (task: Task) => Promise<Result<void>>;
   public sentTasks: Task[] = [];
 
   setMockSend(fn: (task: Task) => Promise<Result<void>>) {
@@ -72,8 +70,8 @@ describe("SendTaskNotificationsUseCase", () => {
         DueDate.create(new Date(Date.now() + _5_HOURS)).value!
       );
 
-      mockRepo.setFindDueSoon(() => Ok([task1, task2]));
-      mockNotificationService.setMockSend(() => Ok(undefined));
+      mockRepo.setFindDueSoon(async () => Ok([task1, task2]));
+      mockNotificationService.setMockSend(async () => Ok(undefined));
 
       const result = await useCase.execute();
 
@@ -87,7 +85,7 @@ describe("SendTaskNotificationsUseCase", () => {
       const useCase = new SendTaskNotificationsUseCase(mockRepo, mockNotificationService);
 
       let capturedThreshold: number | undefined;
-      mockRepo.setFindDueSoon((threshold: number | undefined) => {
+      mockRepo.setFindDueSoon(async (threshold: number | undefined) => {
         capturedThreshold = threshold;
         return Ok([]);
       });
@@ -102,7 +100,7 @@ describe("SendTaskNotificationsUseCase", () => {
       const mockNotificationService = new MockNotificationService();
       const useCase = new SendTaskNotificationsUseCase(mockRepo, mockNotificationService);
 
-      mockRepo.setFindDueSoon(() => Ok([]));
+      mockRepo.setFindDueSoon(async () => Ok([]));
 
       const result = await useCase.execute();
 
@@ -117,7 +115,7 @@ describe("SendTaskNotificationsUseCase", () => {
       const mockNotificationService = new MockNotificationService();
       const useCase = new SendTaskNotificationsUseCase(mockRepo, mockNotificationService);
 
-      mockRepo.setFindDueSoon(() => Err('Database connection failed'));
+      mockRepo.setFindDueSoon(async () => Err('Database connection failed'));
 
       const result = await useCase.execute();
 
@@ -137,8 +135,8 @@ describe("SendTaskNotificationsUseCase", () => {
         DueDate.create(new Date(Date.now() + _2_HOURS)).value!
       );
 
-      mockRepo.setFindDueSoon(() => Ok([task]));
-      mockNotificationService.setMockSend(() => Err('Notification service unavailable'));
+      mockRepo.setFindDueSoon(async () => Ok([task]));
+      mockNotificationService.setMockSend(async () => Err('Notification service unavailable'));
 
       const result = await useCase.execute();
 

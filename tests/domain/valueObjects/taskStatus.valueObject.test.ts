@@ -4,16 +4,16 @@ import { TaskStatus } from "@domain/valueObjects/taskStatus.valueObject";
 describe("TaskStatus", () => {
   describe("::creating task", () => {
     it("should create with pending status by default", () => {
-      const status = TaskStatus.PENDING;
+      const status: string = TaskStatus.PENDING;
 
       expect(status).toBe("pending");
     });
 
     it("should have all valid statuses available", () => {
-      expect(TaskStatus.PENDING).toBe("pending");
-      expect(TaskStatus.IN_PROGRESS).toBe("in_progress");
-      expect(TaskStatus.COMPLETED).toBe("completed");
-      expect(TaskStatus.CANCELLED).toBe("cancelled");
+      expect<string>(TaskStatus.PENDING).toBe("pending");
+      expect<string>(TaskStatus.IN_PROGRESS).toBe("in_progress");
+      expect<string>(TaskStatus.COMPLETED).toBe("completed");
+      expect<string>(TaskStatus.CANCELLED).toBe("cancelled");
     });
   });
 

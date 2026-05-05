@@ -6,9 +6,7 @@ import { Title } from '@domain/valueObjects/title.valueObject';
 import { DueDate } from '@domain/valueObjects/dueDate.valueObject';
 import { TaskStatus } from '@domain/valueObjects/taskStatus.valueObject';
 import { Ok, Err } from '@shared/result.types';
-import { createMockTaskRepository } from '@tests/helpers/taskRepository.mock';
-import { createTestTask } from '@tests/helpers/task.fixtures';
-import { _1_DAY, _12_HOURS, VALID_TASK_ID } from '@tests/helpers/constants';
+import { _1_DAY, VALID_TASK_ID } from '@tests/helpers/constants';
 
 describe("ChangeTaskStatusUseCase", () => {
 

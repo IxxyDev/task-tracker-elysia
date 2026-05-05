@@ -1,13 +1,13 @@
 import type { Task } from '@domain/entities/task.entity';
 
 export class TaskResponseDTO {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  id!: string;
+  title!: string;
+  description!: string;
+  dueDate!: string;
+  status!: string;
+  createdAt!: string;
+  updatedAt!: string;
 
   static fromDomain(task: Task): TaskResponseDTO {
     return {
