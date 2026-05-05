@@ -11,11 +11,13 @@ export const Err = (error: string): ErrResult => ({
 export type Result<T> = OkResult<T> | ErrResult;
 
 export type OkResult<T> = {
-  ok: true,
+  ok: true;
   value: T;
+  error?: never;
 }
 
 export type ErrResult = {
-  ok: false,
+  ok: false;
+  value?: never;
   error: string;
 }
